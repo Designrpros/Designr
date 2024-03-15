@@ -1,7 +1,7 @@
-// ElementPropertiesForm.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useAppDispatch } from '../context/AppStateContext'; // Adjust the import path as necessary
+import { useAppDispatch } from '../context/AppStateContext';
+import { SketchPicker } from 'react-color';
 
 const FormContainer = styled.div`
   display: flex;
@@ -22,39 +22,38 @@ const Input = styled.input`
   color: black;
 `;
 
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #4E4E4E;
-  color: white;
+const IconButton = styled.button`
+  background: none;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
-
-  &:hover {
-    background-color: #5C5C5C;
-  }
+  color: white;
+  padding: 0;
+  margin: 0 5px;
 `;
 
-const ElementPropertiesForm = ({ element, sectionId, columnIndex, elementIndex }) => {
-  console.log(element); // Check if the element prop is what you expect
-  const [content, setContent] = useState(element.content || '');
-  const dispatch = useAppDispatch();
+const Select = styled.select`
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+`;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const ElementPropertiesForm = ({ element }) => {
+  const dispatch = useAppDispatch();
+  const [content, setContent] = useState(element.content);
+  const [textAlign, setTextAlign] = useState(element.styles.textAlign);
+  const [color, setColor] = useState(element.styles.color);
+  const [fontSize, setFontSize] = useState(element.styles.fontSize);
+
+  const handleUpdate = () => {
     dispatch({
-      type: 'UPDATE_ELEMENT_PROPERTIES',
-      payload: {
-        ...element, // Spread the existing element details
-        content, // Update with new content
-      },
+      type: 'UPDATE_ELEMENT_CONTENT_AND_STYLES',
+      payload: { id: element.id, content, styles: { textAlign, color, fontSize } },
     });
   };
-  
 
   return (
-    <FormContainer onSubmit={handleSubmit}>
-      <h3>Edit Element</h3>
+    <FormContainer>
       <Label htmlFor="content">Content:</Label>
       <Input
         id="content"
@@ -62,7 +61,23 @@ const ElementPropertiesForm = ({ element, sectionId, columnIndex, elementIndex }
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
-      <Button type="submit">Update Element</Button>
+
+      <Label htmlFor="textAlign">Text Align:</Label>
+      <Select id="textAlign" value={textAlign} onChange={(e) => setTextAlign(e.target.value)}>
+        <option value="left">Left</option>
+        <option value="center">Center</option>
+        <option value="right">Right</option>
+      </Select>
+
+      <Label>Color:</Label>
+      <SketchPicker color={color} onChangeComplete={(color) => setColor(color.hex)} />
+
+      <Label htmlFor="fontSize">Font Size:</Label>
+      <Input id="fontSize" type="number" value={fontSize} onChange={(e) => setFontSize(e.target.value)} />
+
+      <IconButton onClick={handleUpdate} title="Update">
+        <i className="material-icons">update</i>
+      </IconButton>
     </FormContainer>
   );
 };

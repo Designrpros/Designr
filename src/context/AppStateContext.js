@@ -8,9 +8,13 @@ const initialState = {
   activeTab: '',
   showGridPanel: false,
   sections: [],
+  selectedElement: null, // Ensure this is part of your initial state
 };
 
+
 function appReducer(state, action) {
+  console.log('Dispatched action:', action.type, action.payload); // Add this line
+
   switch (action.type) {
     
     case 'SET_ACTIVE_TAB':
@@ -22,11 +26,12 @@ function appReducer(state, action) {
     case 'ADD_SECTION':
       return { ...state, sections: [...state.sections, action.payload] };
     
-    case 'SELECT_ELEMENT':
-      return { ...state, selectedElementId: action.payload, activeTab: 'elementProperties' };
+      case 'SELECT_ELEMENT':
+        return { ...state, selectedElement: action.payload, activeTab: 'elementProperties' };
+      
+        case 'CLEAR_SELECTED_ELEMENT':
+          return { ...state, selectedElement: null };
 
-    case 'CLEAR_SELECTED_ELEMENT':
-      return { ...state, selectedElementId: null };
 
     case 'ADD_ELEMENT_TO_SECTION': {
       const { sectionId, columnIndex, newElement } = action.payload;
@@ -47,31 +52,51 @@ function appReducer(state, action) {
       };
     }
     case 'UPDATE_ELEMENT_PROPERTIES': {
-      const { sectionId, columnIndex, elementIndex, updatedProperties } = action.payload;
-      // Create a deep copy of sections to avoid direct state mutation
-      const newSections = state.sections.map((section, secIndex) => {
-        if (section.id === sectionId) {
-          // Found the correct section
-          const newColumns = section.columns.map((column, colIndex) => {
-            if (colIndex === columnIndex) {
-              // Found the correct column
-              const newElements = column.elements.map((element, elIndex) => {
-                if (elIndex === elementIndex) {
-                  // Found the correct element, update its properties
-                  return { ...element, ...updatedProperties };
-                }
-                return element; // Return unchanged elements
-              });
-              return { ...column, elements: newElements }; // Return updated column
-            }
-            return column; // Return unchanged columns
-          });
-          return { ...section, columns: newColumns }; // Return updated section
-        }
-        return section; // Return unchanged sections
-      });
-      return { ...state, sections: newSections }; // Return updated state
+      const { id, content } = action.payload;
+      console.log('Before update:', state);
+    
+      const newState = {
+        ...state,
+        sections: state.sections.map(section => ({
+          ...section,
+          columns: section.columns.map(column => ({
+            ...column,
+            elements: column.elements.map(element => {
+              if (element.id === id) {
+                console.log(`Updating element ${id}`);
+                return { ...element, content };
+              }
+              return element;
+            }),
+          })),
+        })),
+      };
+    
+      console.log('After update:', newState);
+      return newState;
     }
+    
+    case 'UPDATE_ELEMENT_CONTENT_AND_STYLES': {
+      const { id, content, styles } = action.payload;
+      return {
+        ...state,
+        sections: state.sections.map(section => ({
+          ...section,
+          columns: section.columns.map(column => ({
+            ...column,
+            elements: column.elements.map(element => {
+              if (element.id === id) {
+                return { ...element, content, styles: { ...element.styles, ...styles } };
+              }
+              return element;
+            }),
+          })),
+        })),
+      };
+    }
+    
+    
+
     
     
     case 'UPDATE_ELEMENT_SIZE': {

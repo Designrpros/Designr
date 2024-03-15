@@ -6,7 +6,7 @@ import Canvas from '../components/Canvas';
 import VerticalToolbar from './VerticalToolbar';
 import GridSelectionPanel from '../components/GridSelectionPanel';
 import Terminal from './terminal/Terminal';
-import { loadWebsiteConfigFromLocalStorage, saveWebsiteConfigToLocalStorage } from './configUtils';
+import { saveWebsiteConfigToLocalStorage } from './configUtils';
 
 const BuilderLayout = styled.div`
   display: flex;
@@ -28,7 +28,7 @@ const WebsiteBuilder = () => {
         const storedConfig = localStorage.getItem(`websiteConfig_${websiteId}`);
         if (storedConfig) {
           const config = JSON.parse(storedConfig);
-          setSections(config.sections || []); // Ensure fallback to an empty array if no sections
+          setSections(config.sections || []);
         } else {
           console.warn("No website configuration found in local storage. Initializing with defaults.");
         }
@@ -43,20 +43,14 @@ const WebsiteBuilder = () => {
   }, [websiteId]);
 
   const handleSaveConfig = (updatedSections) => {
-    const currentConfig = { sections: updatedSections };
-    saveWebsiteConfigToLocalStorage(websiteId, currentConfig);
-  };
-
-  const handleToggleContent = (tab) => {
-    setShowGridPanel(false);
-    // Additional logic for toggling content based on the tab parameter can be added here
+    saveWebsiteConfigToLocalStorage(websiteId, { sections: updatedSections });
   };
 
   const handleAddSection = (layout) => {
     const newSection = {
       id: Date.now(),
       columns: layout,
-      columnWidths: Array(layout).fill(200), // Assuming 'layout' is the number of columns
+      columnWidths: Array(layout).fill(200),
       elements: [],
     };
     const updatedSections = [...sections, newSection];
@@ -65,28 +59,26 @@ const WebsiteBuilder = () => {
     setShowGridPanel(false);
   };
 
-  const handleShowGridSelection = () => {
-    setShowGridPanel(!showGridPanel);
-  };
-
-  const updateElementFunction = (updatedElement) => {
-    // Logic to update an element within a section
-    // This function needs to be implemented based on how you plan to update elements
+  const updateElement = (updatedElement) => {
+    const updatedSections = sections.map(section => {
+      return {
+        ...section,
+        elements: section.elements.map(element => {
+          if (element.id === updatedElement.id) {
+            return updatedElement;
+          }
+          return element;
+        }),
+      };
+    });
+    setSections(updatedSections);
+    handleSaveConfig(updatedSections);
   };
 
   return (
     <BuilderLayout>
-      <VerticalToolbar
-        onToggleContent={handleToggleContent}
-        setShowTerminal={setShowTerminal}
-        setTerminalContent={setTerminalContent}
-      />
-      <Sidebar
-        selectedElement={selectedElement}
-        updateElement={updateElementFunction}
-        onShowGridSelection={handleShowGridSelection}
-        setSections={setSections}
-      />
+      <VerticalToolbar onToggleContent={() => setShowGridPanel(!showGridPanel)} setShowTerminal={setShowTerminal} setTerminalContent={setTerminalContent} />
+      <Sidebar selectedElement={selectedElement} updateElement={updateElement} onShowGridSelection={() => setShowGridPanel(!showGridPanel)} />
       {showGridPanel && <GridSelectionPanel onSelect={handleAddSection} />}
       <Canvas sections={sections} setSelectedElement={setSelectedElement} />
       {showTerminal && <Terminal code={terminalContent} />}

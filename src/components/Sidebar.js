@@ -20,9 +20,10 @@ const SidebarContainer = styled.div`
 
 const Sidebar = () => {
   const { activeTab, showGridPanel, selectedElement } = useAppState();
+  console.log('Active Tab:', activeTab, 'Selected Element:', selectedElement); // Add this line
+
   const dispatch = useAppDispatch();
 
-  // Function to handle adding sections
   const handleAddSection = (cols) => {
     dispatch({
       type: 'ADD_SECTION',
@@ -34,11 +35,12 @@ const Sidebar = () => {
     });
   };
 
-  // Determine what content to display
   let content;
-  if (activeTab === 'elementProperties' && selectedElement) {
+  if (selectedElement) {
+    // Always give priority to editing an element if one is selected
     content = <ElementPropertiesForm element={selectedElement} />;
   } else {
+    // Handle tab navigation only if no element is currently selected
     switch (activeTab) {
       case 'pageManager':
         content = <PageManager />;
@@ -49,7 +51,8 @@ const Sidebar = () => {
       case 'tools':
         content = <ToolsContent />;
         break;
-      // Add more cases as needed
+      default:
+        content = <div>Select a tab</div>;
     }
   }
 
@@ -57,11 +60,8 @@ const Sidebar = () => {
     <SidebarContainer>
       {content}
       {showGridPanel && <GridSelectionPanel onSelect={handleAddSection} />}
-      {selectedElement && <ElementPropertiesForm element={selectedElement} />}
-
     </SidebarContainer>
   );
 };
-
 
 export default Sidebar;

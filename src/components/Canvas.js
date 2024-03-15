@@ -1,8 +1,7 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
 import Section from './Section';
-import { ItemType } from './DraggableItem';
 import { useAppState, useAppDispatch } from '../context/AppStateContext';
 
 const CanvasContainer = styled.div`
@@ -16,45 +15,6 @@ const CanvasContainer = styled.div`
   box-sizing: border-box;
   background-color: #f9f9f9;
 `;
-
-const determineDropTarget = (clientOffset, sectionsRefs) => {
-  let targetSectionId = null;
-  let targetColumnIndex = null;
-
-  // Iterate through all section refs to find which section the drop occurred in
-  Object.entries(sectionsRefs).forEach(([sectionId, sectionRef]) => {
-    if (sectionRef && sectionRef.current) {
-      const { top, bottom, left, right } = sectionRef.current.getBoundingClientRect();
-      // Check if the drop position is within the current section
-      if (
-        clientOffset.x >= left &&
-        clientOffset.x <= right &&
-        clientOffset.y >= top &&
-        clientOffset.y <= bottom
-      ) {
-        targetSectionId = sectionId;
-
-        // Assuming each section knows its columns and their refs
-        // This part needs to be adjusted based on your actual implementation
-        const columnsRefs = sectionRef.current.columnsRefs || [];
-        columnsRefs.forEach((columnRef, columnIndex) => {
-          if (columnRef && columnRef.current) {
-            const columnRect = columnRef.current.getBoundingClientRect();
-            // Check if the drop position is within the current column
-            if (
-              clientOffset.x >= columnRect.left &&
-              clientOffset.x <= columnRect.right
-            ) {
-              targetColumnIndex = columnIndex;
-            }
-          }
-        });
-      }
-    }
-  });
-
-  return { sectionId: targetSectionId, columnIndex: targetColumnIndex };
-};
 
 
 const Canvas = ({ setSelectedElement }) => {
@@ -85,6 +45,10 @@ const Canvas = ({ setSelectedElement }) => {
       });
     },
   });
+  
+  useEffect(() => {
+    console.log("Current state:", sections);
+  }, [sections]); // Assuming 'sections' is part of your state
   
 
   const onElementDrop = useCallback((item, sectionId, columnIndex) => {

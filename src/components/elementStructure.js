@@ -6,6 +6,15 @@ export const elementStructure = {
   src: '', // Optional for image source URL
   // Add more properties as needed for different element types
   level: 0, // Optional for nesting elements within sections
+  styles: {
+    htmlTag: 'h2',
+    textAlign: 'center',
+    color: '#000000',
+    fontSize: '16px',
+    fontWeight: 'normal',
+    textShadow: 'none',
+    // Add more style properties as needed
+  },
 };
 
 

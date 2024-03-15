@@ -62,28 +62,42 @@ const Column = ({ sectionId, columnIndex, column, setSelectedElement }) => {
   const [hoverPosition, setHoverPosition] = useState(null);
   const dispatch = useAppDispatch();
   const columnRef = useRef(null);
+  const generateUniqueId = () => Date.now().toString();
 
   const [, drop] = useDrop({
     accept: 'element',
     drop: (item, monitor) => {
       const clientOffset = monitor.getClientOffset();
       const { vertical, horizontal } = determineDropPosition(clientOffset, columnRef);
-      const newElement = { ...elementStructure, type: item.type, content: item.content || '', position: { vertical, horizontal } };
-      dispatch({ type: 'ADD_ELEMENT_TO_SECTION', payload: { sectionId, columnIndex, newElement } });
+      const uniqueId = generateUniqueId(); // Generate a unique ID for the element
+      const newElement = {
+        ...elementStructure,
+        id: uniqueId, // Assign the unique ID
+        type: item.type,
+        content: item.content || '',
+        position: { vertical, horizontal },
+      };
+      dispatch({
+        type: 'ADD_ELEMENT_TO_SECTION',
+        payload: { sectionId, columnIndex, newElement },
+      });
     },
     hover: (item, monitor) => {
       const clientOffset = monitor.getClientOffset();
       const hoverPosition = determineDropPosition(clientOffset, columnRef);
-      setHoverPosition(hoverPosition); // Update hover position state
+      setHoverPosition(hoverPosition);
     },
   });
+  
 
   const handleElementClick = (elementDetails) => {
+    console.log('Element clicked:', elementDetails); // Add this line
     dispatch({
       type: 'SELECT_ELEMENT',
       payload: elementDetails,
     });
   };
+  
   
   
   
