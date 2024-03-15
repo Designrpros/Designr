@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useAppDispatch } from '../../context/AppContext'; // Adjust the import path as necessary
+import { useAppDispatch } from '../../context/AppStateContext'; // Adjust the import path as necessary
 
 const ContentContainer = styled.div`
   padding: 20px;

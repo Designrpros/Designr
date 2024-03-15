@@ -1,7 +1,7 @@
 // ElementPropertiesForm.js
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useAppDispatch } from '../context/AppContext'; // Adjust the import path as necessary
+import { useAppDispatch } from '../context/AppStateContext'; // Adjust the import path as necessary
 
 const FormContainer = styled.div`
   display: flex;
@@ -36,7 +36,8 @@ const Button = styled.button`
 `;
 
 const ElementPropertiesForm = ({ element, sectionId, columnIndex, elementIndex }) => {
-  const [content, setContent] = useState(element ? element.content : '');
+  console.log(element); // Check if the element prop is what you expect
+  const [content, setContent] = useState(element.content || '');
   const dispatch = useAppDispatch();
 
   const handleSubmit = (e) => {
@@ -44,13 +45,12 @@ const ElementPropertiesForm = ({ element, sectionId, columnIndex, elementIndex }
     dispatch({
       type: 'UPDATE_ELEMENT_PROPERTIES',
       payload: {
-        sectionId,
-        columnIndex,
-        elementIndex,
-        updatedProperties: { content },
+        ...element, // Spread the existing element details
+        content, // Update with new content
       },
     });
   };
+  
 
   return (
     <FormContainer onSubmit={handleSubmit}>

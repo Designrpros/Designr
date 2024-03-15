@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useAppState, useAppDispatch } from '../context/AppContext';
+import { useAppState, useAppDispatch } from '../context/AppStateContext';
 import PageManager from '../pages/ToolbarContent/PageManager';
 import AddSectionContent from '../pages/ToolbarContent/AddSectionContent';
 import GridSelectionPanel from './GridSelectionPanel';
@@ -18,50 +18,50 @@ const SidebarContainer = styled.div`
   z-index: 100;
 `;
 
-const Sidebar = ({ selectedElement, updateElement }) => {
-  const { activeTab, showGridPanel } = useAppState();
+const Sidebar = () => {
+  const { activeTab, showGridPanel, selectedElement } = useAppState();
   const dispatch = useAppDispatch();
 
+  // Function to handle adding sections
   const handleAddSection = (cols) => {
-    // Dispatch the action to add a new section
     dispatch({
       type: 'ADD_SECTION',
       payload: {
         id: Date.now(),
         columns: Array.from({ length: cols }, () => ({ elements: [] })),
-        columnWidths: Array.from({ length: cols }, () => 200), // Assuming a default width of 200 for each column
-        elements: []
-      }
+        columnWidths: Array.from({ length: cols }, () => 200),
+      },
     });
-    // Immediately close the GridSelectionPanel after adding the section
-    dispatch({ type: 'TOGGLE_GRID_PANEL' });
   };
-  
 
-  
-
+  // Determine what content to display
   let content;
-  switch (activeTab) {
-    case 'pageManager':
-      content = <PageManager />;
-      break;
-    case 'addSection':
-      content = <AddSectionContent onShowGridSelection={() => dispatch({ type: 'TOGGLE_GRID_PANEL' })} />;
-      break;
-    case 'tools':
-      content = <ToolsContent />;
-      break;
-    case 'elementProperties':
-      content = selectedElement ? <ElementPropertiesForm element={selectedElement} updateElement={updateElement} /> : <div>No element selected</div>;
-      break;
+  if (activeTab === 'elementProperties' && selectedElement) {
+    content = <ElementPropertiesForm element={selectedElement} />;
+  } else {
+    switch (activeTab) {
+      case 'pageManager':
+        content = <PageManager />;
+        break;
+      case 'addSection':
+        content = <AddSectionContent onShowGridSelection={() => dispatch({ type: 'TOGGLE_GRID_PANEL' })} />;
+        break;
+      case 'tools':
+        content = <ToolsContent />;
+        break;
+      // Add more cases as needed
+    }
   }
 
   return (
     <SidebarContainer>
       {content}
       {showGridPanel && <GridSelectionPanel onSelect={handleAddSection} />}
+      {selectedElement && <ElementPropertiesForm element={selectedElement} />}
+
     </SidebarContainer>
   );
 };
+
 
 export default Sidebar;

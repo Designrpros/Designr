@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useAppDispatch } from '../context/AppContext';
+import { useAppDispatch } from '../context/AppStateContext';
 
 const ToolbarContainer = styled.div`
   display: flex;
@@ -32,7 +32,10 @@ const VerticalToolbar = () => {
 
   const handleSetActiveTab = (tab) => {
     dispatch({ type: 'SET_ACTIVE_TAB', payload: tab });
+    dispatch({ type: 'CLEAR_SELECTED_ELEMENT' });
   };
+
+  
 
   return (
     <ToolbarContainer>

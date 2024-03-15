@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
 import Section from './Section';
 import { ItemType } from './DraggableItem';
-import { useAppState, useAppDispatch } from '../context/AppContext';
+import { useAppState, useAppDispatch } from '../context/AppStateContext';
 
 const CanvasContainer = styled.div`
   display: flex;
