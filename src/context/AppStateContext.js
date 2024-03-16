@@ -41,6 +41,29 @@ function appReducer(state, action) {
         return { ...state, sections: [...state.sections, newSection] };
       }
       
+      case 'ADD_ELEMENT_TO_SLOT_AND_EXPAND': {
+        const { slotId, item } = action.payload;
+        return {
+          ...state,
+          sections: state.sections.map(section => ({
+            ...section,
+            columns: section.columns.map(column => ({
+              ...column,
+              slots: column.slots.map(slot => {
+                if (slot.id === slotId) {
+                  return {
+                    ...slot,
+                    elements: [...slot.elements, item],
+                    expanded: true, // Set the slot to expanded
+                  };
+                }
+                return slot;
+              }),
+            })),
+          })),
+        };
+      }
+      
       
       
       case 'SELECT_ELEMENT':

@@ -25,14 +25,9 @@ const Slot = ({ slot, expanded, onDrop }) => {
     const [, drop] = useDrop({
         accept: 'element',
         drop: (item, monitor) => {
-          // When an item is dropped, invoke the onDrop callback if provided
-          if (onDrop) {
-            onDrop(item);
-          }
-
-          // Dispatch an action to add the item to this slot
+          // Dispatch an action to add the item to this slot and expand it
           dispatch({
-            type: 'ADD_ELEMENT_TO_SLOT',
+            type: 'ADD_ELEMENT_TO_SLOT_AND_EXPAND',
             payload: { slotId: slot.id, item: item },
           });
         },
@@ -46,6 +41,7 @@ const Slot = ({ slot, expanded, onDrop }) => {
       </SlotContainer>
     );
 };
+
 
 
 export default Slot;
