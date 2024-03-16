@@ -31,7 +31,7 @@ const renderResizableElement = (element, onResize) => {
           handleSize={[8, 8]}
           onResizeStop={(e, data) => onResize(element.id, data.size)}
         >
-          <HeadingElement content={element.content} />
+            <HeadingElement elementId={element.id} content={element.content} />
         </ResizableBox>
       );
     case 'image':

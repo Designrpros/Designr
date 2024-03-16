@@ -78,7 +78,8 @@ function appReducer(state, action) {
     
     case 'UPDATE_ELEMENT_CONTENT_AND_STYLES': {
       const { id, content, styles } = action.payload;
-      return {
+      console.log('Before update:', JSON.stringify(state, null, 2));
+      const newState = {
         ...state,
         sections: state.sections.map(section => ({
           ...section,
@@ -86,14 +87,19 @@ function appReducer(state, action) {
             ...column,
             elements: column.elements.map(element => {
               if (element.id === id) {
-                return { ...element, content, styles: { ...element.styles, ...styles } };
+                const updatedStyles = { ...element.styles, ...styles };
+                console.log(`Updating element ${id} with styles:`, updatedStyles);
+                return { ...element, content, styles: updatedStyles };
               }
               return element;
             }),
           })),
         })),
       };
+      console.log('After update:', JSON.stringify(newState, null, 2));
+      return newState;
     }
+    
     
     
 

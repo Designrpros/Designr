@@ -1,5 +1,4 @@
 
-// This is more for documentation purposes since JS won't enforce this structure.
 export const elementStructure = {
   type: '', // e.g., "heading", "image", "text"
   content: '', // Optional for text content
