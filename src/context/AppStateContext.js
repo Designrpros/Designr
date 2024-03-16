@@ -53,8 +53,8 @@ function appReducer(state, action) {
                 if (slot.id === slotId) {
                   return {
                     ...slot,
-                    elements: [...slot.elements, item],
-                    expanded: true, // Set the slot to expanded
+                    elements: [...slot.elements, item], // Add the new element to the slot
+                    expanded: true, // Optionally expand the slot
                   };
                 }
                 return slot;
@@ -63,6 +63,7 @@ function appReducer(state, action) {
           })),
         };
       }
+      
       
       
       
@@ -196,34 +197,33 @@ function appReducer(state, action) {
     }
     
     case 'UPDATE_ELEMENT_CONTENT_AND_STYLES': {
-      const { id, content, styles, position } = action.payload;
-      return {
-        ...state,
-        sections: state.sections.map(section => ({
-          ...section,
-          columns: section.columns.map(column => ({
-            ...column,
-            slots: column.slots.map(slot => ({
-              ...slot,
-              elements: slot.elements.map(element => {
-                // Check if this is the element to update
-                if (element.id === id) {
-                  // Update only the targeted element
-                  return {
-                    ...element,
-                    content,
-                    styles: { ...element.styles, ...styles },
-                    position: { ...element.position, ...position }
-                  };
-                }
-                // Leave other elements unchanged
-                return element;
-              })
-            }))
+      console.log(`Updating element with ID: ${action.payload.id}`);
+      const newState = state.sections.map(section => ({
+        ...section,
+        columns: section.columns.map(column => ({
+          ...column,
+          slots: column.slots.map(slot => ({
+            ...slot,
+            elements: slot.elements.map(element => {
+              if (element.id === action.payload.id) {
+                console.log(`Found element to update:`, element);
+                return {
+                  ...element,
+                  content: action.payload.content,
+                  styles: { ...element.styles, ...action.payload.styles },
+                  position: { ...element.position, ...action.payload.position }
+                };
+              }
+              return element;
+            })
           }))
         }))
-      };
+      }));
+      console.log('New state:', newState);
+      return { ...state, sections: newState };
     }
+    
+    
     
     
     

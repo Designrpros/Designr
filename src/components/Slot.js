@@ -2,6 +2,7 @@ import React from 'react';
 import { useDrop } from 'react-dnd';
 import styled, { css } from 'styled-components';
 import { useAppDispatch } from '../context/AppStateContext';
+import { v4 as uuidv4 } from 'uuid'; // Ensure you've installed uuid
 
 const SlotContainer = styled.div`
   display: flex;
@@ -25,15 +26,20 @@ const Slot = ({ slot, expanded, onDrop }) => {
     const [, drop] = useDrop({
         accept: 'element',
         drop: (item, monitor) => {
-          // Dispatch an action to add the item to this slot and expand it
+          // Create a new element instance from the dropped tool
+          const newElement = {
+            ...item,
+            id: uuidv4(), // Assuming you're using uuid for unique IDs
+            styles: item.styles || { textAlign: 'left', color: '#000', fontSize: '16px', fontWeight: 'normal', textShadow: 'none' },
+          };
+          
+
+          // Dispatch an action to add the new element to this slot and expand it
           dispatch({
             type: 'ADD_ELEMENT_TO_SLOT_AND_EXPAND',
             payload: {
               slotId: slot.id,
-              item: {
-                ...item,
-                styles: item.styles || { textAlign: 'left', color: '#000', fontSize: '16px' }, // Provide default styles
-              },
+              item: newElement,
             },
           });          
         },

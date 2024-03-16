@@ -46,7 +46,7 @@ const DraggableElement = ({ item }) => {
 
 
 
-const ToolsContent = ({ tools = importedTools }) => { // Use the imported tools as default
+const ToolsContent = ({ tools = importedTools }) => {
   console.log(tools); // Debug: Log tools to ensure they're passed correctly
 
   return (
@@ -54,8 +54,8 @@ const ToolsContent = ({ tools = importedTools }) => { // Use the imported tools 
       <h2>Tools</h2>
       <ToolsGrid>
         {tools.length > 0 ? (
-          tools.map((tool, index) => ( // Use index as key if type is not unique
-            <DraggableElement key={index} item={tool} />
+          tools.map((tool) => ( // Use tool.id as key
+            <DraggableElement key={tool.id} item={tool} />
           ))
         ) : (
           <div>No tools found</div>
@@ -64,6 +64,7 @@ const ToolsContent = ({ tools = importedTools }) => { // Use the imported tools 
     </ContentContainer>
   );
 };
+
 
 
 export default ToolsContent;
