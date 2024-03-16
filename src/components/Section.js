@@ -3,30 +3,26 @@ import styled from 'styled-components';
 import Column from './Column';
 
 const SectionContainer = styled.div`
-  display: grid;
-  gap: 10px;
-  padding: 10px;
-  width: 100%;
-  min-height: 100px;
+display: flex;
+flex-wrap: wrap;
+gap: 20px;
+padding: 10px;
+border: 1px solid #ccc;
 `;
 
-const Section = ({ id, columns, columnWidths, setSelectedElement, onElementDrop }) => {
-  console.log('Rendering section:', id, columns, columnWidths); // Log section data
 
-  const gridTemplateColumns = columnWidths.map(width => `minmax(${width}px, 1fr)`).join(' ');
 
+
+
+const Section = ({ section, setSelectedElement }) => {
   return (
-    <SectionContainer style={{ gridTemplateColumns }}>
-      {columns && columns.map((column, idx) => (
+    <SectionContainer>
+      {section.columns.map((column, index) => (
         <Column
-        key={idx}
-        sectionId={id}
-        columnIndex={idx}
-        column={column}
-        onElementDrop={onElementDrop}
-        setSelectedElement={setSelectedElement} // Make sure this prop is passed
-      />
-      
+          key={column.id}
+          column={column}
+          setSelectedElement={setSelectedElement}
+        />
       ))}
     </SectionContainer>
   );

@@ -58,12 +58,26 @@ const ElementPropertiesForm = ({ element }) => {
   const [fontSize, setFontSize] = useState(element.styles.fontSize);
   const [showColorPicker, setShowColorPicker] = useState(false);
 
-  const handleUpdate = () => {
-    dispatch({
-      type: 'UPDATE_ELEMENT_CONTENT_AND_STYLES',
-      payload: { id: element.id, content, styles: { textAlign, color, fontSize } },
-    });
-  };
+  const [fontWeight, setFontWeight] = useState(element.styles.fontWeight || 'normal');
+const [textShadow, setTextShadow] = useState(element.styles.textShadow || 'none');
+const [position, setPosition] = useState(element.position || { left: 0, top: 0, right: 0, bottom: 0 });
+const [fontFamily, setFontFamily] = useState(element.styles.fontFamily || 'Arial');
+
+const [left, setLeft] = useState(element.position?.left || 0);
+const [top, setTop] = useState(element.position?.top || 0);
+
+const handleUpdate = () => {
+  dispatch({
+    type: 'UPDATE_ELEMENT_CONTENT_AND_STYLES',
+    payload: {
+      id: element.id,
+      content,
+      styles: { textAlign, color, fontSize, fontWeight, textShadow, fontFamily },
+      position: { left, top }, // Include right and bottom as needed
+    },
+  });
+};
+
 
   return (
     <FormContainer>
@@ -97,6 +111,34 @@ const ElementPropertiesForm = ({ element }) => {
           <SketchPicker color={color} onChangeComplete={(color) => setColor(color.hex)} />
         )}
       </ColorPickerContainer>
+
+      <Label>Font Weight:</Label>
+        <Input
+          type="text"
+          value={fontWeight}
+          onChange={(e) => setFontWeight(e.target.value)}
+        />
+
+        <Label>Text Shadow:</Label>
+        <Input
+          type="text"
+          value={textShadow}
+          onChange={(e) => setTextShadow(e.target.value)}
+        />
+
+        <Label>Left Position:</Label>
+        <Input
+          type="number"
+          value={left}
+          onChange={(e) => setLeft(Number(e.target.value))}
+        />
+
+        <Label>Top Position:</Label>
+        <Input
+          type="number"
+          value={top}
+          onChange={(e) => setTop(Number(e.target.value))}
+        />
 
       <Label htmlFor="fontSize">Font Size:</Label>
       <Input id="fontSize" type="number" value={fontSize} onChange={(e) => setFontSize(e.target.value)} />

@@ -10,35 +10,26 @@ const DynamicHeading = styled(({ tag, textAlign, color, fontSize, fontWeight, te
   text-shadow: ${props => props.textShadow || 'none'};
 `;
 
+// Adjusted to remove absolute positioning
+const HeadingContainer = styled.div`
+  margin: 5px 0; // Example of adding some spacing between elements
+`;
 
 const HeadingElement = ({ elementId }) => {
     const { sections } = useAppState();
-    
-    console.log("Received elementId:", elementId); // Debugging line
-
-    const element = sections.flatMap(section => section.columns.flatMap(column => column.elements))
-                             .find(el => el.id === elementId);
-
-    console.log("Found element:", element); // Debugging line
-
-    const styles = element ? element.styles : {};
-    const content = element ? element.content : 'Default Content';
-
-    const htmlTag = styles.htmlTag || 'h2';
+    const element = sections.flatMap(section => section.columns.flatMap(column => column.elements)).find(el => el.id === elementId);
+    const { styles, content } = element || { styles: {}, content: 'Default Content' };
+  
     return (
-        <DynamicHeading
-            tag={htmlTag}
-            textAlign={styles.textAlign}
-            color={styles.color}
-            fontSize={styles.fontSize}
-            fontWeight={styles.fontWeight}
-            textShadow={styles.textShadow}
-        >
+        <HeadingContainer>
+          <DynamicHeading
+            tag={styles.htmlTag || 'h2'}
+            style={{ ...styles }}
+          >
             {content}
-        </DynamicHeading>
-    );
+          </DynamicHeading>
+        </HeadingContainer>
+      );
 };
-
-
 
 export default HeadingElement;

@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useAppDispatch } from '../../context/AppStateContext'; // Adjust the import path as necessary
+import GridSelectionPanel from '../../components/GridSelectionPanel'; // Adjust the import path as necessary
 
 const ContentContainer = styled.div`
   padding: 20px;
   color: white;
 `;
 
-const GridOptionButton = styled.button`
+const Button = styled.button`
   background: #4E4E4E;
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  width: 100%; 
+  margin-bottom: 20px; // Added margin for spacing
+  width: 100%;
   &:hover {
     background: #5C5C5C;
   }
@@ -22,17 +24,28 @@ const GridOptionButton = styled.button`
 
 const AddSectionContent = () => {
   const dispatch = useAppDispatch();
+  const [showGridSelection, setShowGridSelection] = useState(false);
 
-  const handleShowGridSelection = () => {
-    // Dispatching the action to toggle grid panel visibility
-    dispatch({ type: 'TOGGLE_GRID_PANEL' });
+  const handleAddSection = (columns) => {
+    // Assuming an action creator exists that accepts the number of columns for the new section
+    dispatch({
+      type: 'ADD_SECTION_WITH_COLUMNS',
+      payload: { columns },
+    });
+    setShowGridSelection(false); // Hide grid selection after adding
   };
 
   return (
     <ContentContainer>
       <h2>Add Section</h2>
-      <p>Click to select the grid layout for the new section:</p>
-      <GridOptionButton onClick={handleShowGridSelection}>Select Grid Layout</GridOptionButton>
+      {!showGridSelection ? (
+        <>
+          <p>Click to select the grid layout for the new section:</p>
+          <Button onClick={() => setShowGridSelection(true)}>Select Grid Layout</Button>
+        </>
+      ) : (
+        <GridSelectionPanel onSelect={handleAddSection} />
+      )}
     </ContentContainer>
   );
 };
