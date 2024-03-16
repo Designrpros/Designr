@@ -53,10 +53,10 @@ const AlignmentButton = styled(IconButton)`
 const ElementPropertiesForm = ({ element }) => {
   const dispatch = useAppDispatch();
   const [content, setContent] = useState(element.content);
-  const [textAlign, setTextAlign] = useState(element.styles.textAlign);
-  const [color, setColor] = useState(element.styles.color);
-  const [fontSize, setFontSize] = useState(element.styles.fontSize);
-  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [textAlign, setTextAlign] = useState(element.styles?.textAlign ?? 'left');
+  const [color, setColor] = useState(element.styles?.color ?? '#000');
+  const [fontSize, setFontSize] = useState(element.styles?.fontSize ?? '16px');
+    const [showColorPicker, setShowColorPicker] = useState(false);
 
   const [fontWeight, setFontWeight] = useState(element.styles.fontWeight || 'normal');
 const [textShadow, setTextShadow] = useState(element.styles.textShadow || 'none');
@@ -77,7 +77,6 @@ const handleUpdate = () => {
     },
   });
 };
-
 
   return (
     <FormContainer>

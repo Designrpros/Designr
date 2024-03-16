@@ -28,19 +28,35 @@ const Slot = ({ slot, expanded, onDrop }) => {
           // Dispatch an action to add the item to this slot and expand it
           dispatch({
             type: 'ADD_ELEMENT_TO_SLOT_AND_EXPAND',
-            payload: { slotId: slot.id, item: item },
-          });
+            payload: {
+              slotId: slot.id,
+              item: {
+                ...item,
+                styles: item.styles || { textAlign: 'left', color: '#000', fontSize: '16px' }, // Provide default styles
+              },
+            },
+          });          
         },
     });
 
+    const handleElementClick = (element) => {
+      dispatch({
+        type: 'SELECT_ELEMENT',
+        payload: element,
+      });
+    };
+
     return (
       <SlotContainer ref={drop} expanded={expanded}>
-        {slot.elements && slot.elements.map((element, index) => (
-          <div key={index}>{element.content}</div>
+        {slot && slot.elements && slot.elements.map((element, index) => (
+          <div key={index} onClick={() => handleElementClick(element)} style={{ cursor: 'pointer' }}>
+            {element.content}
+          </div>
         ))}
       </SlotContainer>
     );
 };
+
 
 
 

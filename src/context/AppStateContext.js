@@ -68,9 +68,10 @@ function appReducer(state, action) {
       
       case 'SELECT_ELEMENT':
         return { ...state, selectedElement: action.payload };
-
+      
         case 'CLEAR_SELECTED_ELEMENT':
           return { ...state, selectedElement: null };
+
 
           case 'ADD_ELEMENT_TO_CANVAS': {
             const newElement = {
@@ -179,7 +180,7 @@ function appReducer(state, action) {
           ...section,
           columns: section.columns.map(column => ({
             ...column,
-            elements: column.elements.map(element => {
+            elements: (column.elements || []).map(element => {
               if (element.id === id) {
                 console.log(`Updating element ${id}`);
                 return { ...element, content };
@@ -196,31 +197,35 @@ function appReducer(state, action) {
     
     case 'UPDATE_ELEMENT_CONTENT_AND_STYLES': {
       const { id, content, styles, position } = action.payload;
-      console.log('Before update:', JSON.stringify(state, null, 2));
-      const newState = {
+      return {
         ...state,
         sections: state.sections.map(section => ({
           ...section,
           columns: section.columns.map(column => ({
             ...column,
-            elements: column.elements.map(element => {
-              if (element.id === id) {
-                const updatedStyles = { ...element.styles, ...styles };
-                const updatedElement = { ...element, content, styles: updatedStyles };
-                if (position) {
-                  updatedElement.position = { ...element.position, ...position };
+            slots: column.slots.map(slot => ({
+              ...slot,
+              elements: slot.elements.map(element => {
+                // Check if this is the element to update
+                if (element.id === id) {
+                  // Update only the targeted element
+                  return {
+                    ...element,
+                    content,
+                    styles: { ...element.styles, ...styles },
+                    position: { ...element.position, ...position }
+                  };
                 }
-                console.log(`Updating element ${id} with styles:`, updatedStyles);
-                return updatedElement;
-              }
-              return element;
-            }),
-          })),
-        })),
+                // Leave other elements unchanged
+                return element;
+              })
+            }))
+          }))
+        }))
       };
-      console.log('After update:', JSON.stringify(newState, null, 2));
-      return newState;
     }
+    
+    
     
     
     
@@ -265,7 +270,7 @@ function appReducer(state, action) {
           if (section.id === sectionId) {
             const updatedColumns = section.columns.map((column, idx) => {
               if (idx === columnIndex) {
-                const updatedElements = column.elements.map((element) => {
+                const updatedElements = (column.elements || []).map((element) => {
                   if (element.id === elementId) {
                     return { ...element, size: newSize };
                   }

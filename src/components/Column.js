@@ -24,7 +24,8 @@ const RowContainer = styled.div`
 
 const Column = React.forwardRef(({ sectionId, column }, ref) => {
   const dispatch = useAppDispatch();
-  const [expandedSlots, setExpandedSlots] = useState(column.slots.map(() => false));
+  // Assuming each slot in column.slots already has a unique id
+  const [expandedSlots, setExpandedSlots] = useState(new Array(column.slots.length).fill(false));
   console.log("Column slots:", column.slots);
   const [, drop] = useDrop({
     accept: 'element',
@@ -35,12 +36,18 @@ const Column = React.forwardRef(({ sectionId, column }, ref) => {
 
   const renderRows = () => {
     const rows = [];
+    // Assuming there are always 9 slots for a 3x3 grid
     for (let i = 0; i < 3; i++) { // Create 3 rows
       const slotsInRow = column.slots.slice(i * 3, (i + 1) * 3);
       const row = (
         <RowContainer key={`row-${i}`}>
-          {slotsInRow.map((slot, index) => (
-            <Slot key={`slot-${index}`} slot={slot} expanded={false} onDrop={() => {}} />
+          {slotsInRow.map((slot) => (
+            <Slot
+              key={slot.id} // Using unique slot.id for key
+              slot={slot}
+              expanded={expandedSlots[slot.id]} // Adjusted to use slot.id for tracking expanded state
+              onDrop={() => {}}
+            />
           ))}
         </RowContainer>
       );
